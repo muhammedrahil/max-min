@@ -1,0 +1,171 @@
+{% extends "user_template/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+			<div class="col-first">
+				<h1>Shop Category page</h1>
+				<nav class="d-flex align-items-center">
+					<a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+					<a href="#">Shop<span class="lnr lnr-arrow-right"></span></a>
+					<a href="category.html">Fashon Category</a>
+				</nav>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End Banner Area -->
+<div class="container mt-5">
+	<div class="row">
+		{% include 'user_template/category/filter.html' %}
+		<div class="col-xl-9 col-lg-8 col-md-7">
+			<!-- Start Filter Bar -->
+			<div class="filter-bar d-flex flex-wrap align-items-center">
+
+				<input type="text" hidden value="{{category.id}}" id="category" >
+
+				<div class="sorting mr-auto">
+					<select>
+						<option value="1">Show 12</option>
+						<option value="1">Show 12</option>
+						<option value="1">Show 12</option>
+					</select>
+				</div>
+
+				<div class="pagination">
+					{% if products.has_previous %}
+					<a href="?page={{ products.previous_page_number }}" class="prev-arrow"><i
+							class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
+
+					<a href="?page=1">1</a>
+					{% endif %}
+					<a href="?page={{ products.number }}" class="active">{{ products.number }}</a>
+					<!-- <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a> -->
+					{% if products.has_next %}
+					<a href="?page={{ products.next_page_number }}" class="next-arrow"><i class="fa fa-long-arrow-right"
+							aria-hidden="true"></i></a>
+					{% endif %}
+				</div>
+			</div>
+			<!-- End Filter Bar -->
+			<!-- Start Best Seller -->
+			<section class="lattest-product-area pb-40 category-list">
+				<div class="row" id="filteredProducts">
+					<p class="ajaxLoader">Loading..........</p>
+					{% for product in products %}
+					<!-- single product -->
+					<div class="col-lg-4 col-md-6">
+						<div class="single-product">
+							<a href="{{product.get_absolute_url}}">
+								<div>
+									<img src="{{product.images.url}}" alt="Loading......">
+								</div>
+								<div class="product-details">
+									<h6> <strong>{{product.product.product_brand}}</strong><br>
+										{{product.product.product_name}}</h6>
+									<div class="price">
+										<h6><strong>₹{{product.offerprice}}</strong> </h6>
+										<h6 class="l-through">₹{{product.product.unit_price}}</h6>
+										<br>
+										<h6 class="text-success">{{product.offer_persentage}}% off</h6>
+									</div>
+							</a>
+							<div class="prd-bottom">
+
+								<a href="" class="social-info">
+									<span class="ti-bag"></span>
+									<p class="hover-text">add to bag</p>
+								</a>
+								<a href="" class="social-info">
+									<span class="lnr lnr-heart"></span>
+									<p class="hover-text">Wishlist</p>
+								</a>
+								<a href="" class="social-info">
+									<span class="lnr lnr-sync"></span>
+									<p class="hover-text">compare</p>
+								</a>
+								<a href="" class="social-info">
+									<span class="lnr lnr-move"></span>
+									<p class="hover-text">view more</p>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- single product -->
+				{% endfor %}
+
+
+		</div>
+		</section>
+		<!-- End Best Seller -->
+		<!-- Start Filter Bar -->
+		<div class="filter-bar d-flex flex-wrap align-items-center">
+			<div class="sorting mr-auto">
+				<select>
+					<option value="1">Show 12</option>
+					<option value="1">Show 12</option>
+					<option value="1">Show 12</option>
+				</select>
+			</div>
+			<div class="pagination">
+				{% if products.has_previous %}
+				<a href="?page={{ products.previous_page_number }}" class="prev-arrow"><i class="fa fa-long-arrow-left"
+						aria-hidden="true"></i></a>
+
+				<a href="?page=1">1</a>
+				{% endif %}
+				<a href="?page={{ products.number }}" class="active">{{ products.number }}</a>
+				<!-- <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a> -->
+				{% if products.has_next %}
+				<a href="?page={{ products.next_page_number }}" class="next-arrow"><i class="fa fa-long-arrow-right"
+						aria-hidden="true"></i></a>
+				{% endif %}
+			</div>
+		</div>
+		<!-- End Filter Bar -->
+	</div>
+</div>
+</div>
+
+{% include 'user_template/category/deals-of-week.html' %}
+{% endblock %}
+
+
+{% block script %}
+<script>
+	$(document).ready(function () {
+		$(".ajaxLoader").hide();
+  var _filterObj = {}
+  $(".filter-checkbox").on('click', function () {
+	category=document.getElementById('category').value;
+    $(".filter-checkbox").each(function (index, ele) {
+      var _filterVal = $(this).val();
+      var _filterKey = $(this).data('filter');
+      _filterObj[_filterKey] = Array.from(document.querySelectorAll('input[data-filter=' + _filterKey + ']:checked')).map(function (el) {
+        return el.value;
+      });
+    });
+	console.log(_filterObj)
+    $.ajax({
+      url: "{% url 'productsCategory:filter_data' %}",
+	  type : "GET",
+      data: _filterObj,
+      dataType: 'json',
+      beforeSend: function () {
+		$(".ajaxLoader").show();
+      },
+      success: function (res) {
+
+		$("#filteredProducts").html(res.data);
+		$(".ajaxLoader").hide();
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}

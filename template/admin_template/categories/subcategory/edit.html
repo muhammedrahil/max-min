@@ -1,0 +1,21 @@
+{% extends "admin_template/categories/subcategory/add.html" %}
+
+
+{% block model_id %} id="editModal{{ sub.pk }}" {% endblock model_id %}
+
+{% block title %} Edit Category {% endblock title %}
+
+{% block action %} action="{% url 'categoryapp:edit_sub_category' pk=sub.pk %}" {% endblock action %}
+
+{% block input_id %} 
+<div class="form-group">
+    <input type="text" class="form-control" value="{{sub.id}}">
+</div>
+{% endblock input_id %}
+
+{% block value_category %}  value="{{sub.sub_category}}" {% endblock value_category %}  
+
+{% block value_description %}{{sub.description}}{% endblock value_description %}
+
+{% block button_name %} Edit {% endblock button_name %}
+

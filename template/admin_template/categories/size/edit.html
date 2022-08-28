@@ -1,0 +1,21 @@
+{% extends "admin_template/categories/size/add.html" %}
+
+
+{% block model_id %} id="editModal{{ s.pk }}" {% endblock model_id %}
+
+{% block title %} Edit Size {% endblock title %}
+
+{% block action %} action="{% url 'categoryapp:edit_size' pk=s.pk  %}" {% endblock action %}
+
+{% block input_id %} 
+<div class="form-group">
+    <input type="text" class="form-control" value="{{s.id}}">
+</div>
+{% endblock input_id %}
+
+{% block value_size %}  value="{{s.Size}}" {% endblock value_size %}  
+
+{% block value_description %}{{s.discription}}{% endblock value_description %}
+
+{% block button_name %} Edit {% endblock button_name %}
+

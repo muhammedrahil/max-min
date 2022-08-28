@@ -1,0 +1,164 @@
+{% extends "user_template/base.html" %}
+{% load static %}
+
+{% block static %}
+<style>
+	.card {
+		border: none
+	}
+
+	.product {
+		background-color: #eee
+	}
+
+	.brand {
+		font-size: 13px
+	}
+
+	.act-price {
+		color: red;
+		font-weight: 700
+	}
+
+	.dis-price {
+		text-decoration: line-through
+	}
+
+	.about {
+		font-size: 14px
+	}
+
+	.color {
+		margin-bottom: 10px
+	}
+
+	label.radio {
+		cursor: pointer
+	}
+
+	label.radio input {
+		position: absolute;
+		top: 0;
+		left: 0;
+		visibility: hidden;
+		pointer-events: none
+	}
+
+	label.radio span {
+		padding: 2px 9px;
+		border: 2px solid #ff0000;
+		display: inline-block;
+		color: #ff0000;
+		border-radius: 3px;
+		text-transform: uppercase
+	}
+
+	label.radio input:checked+span {
+		border-color: #ff0000;
+		background-color: #ff0000;
+		color: #fff
+	}
+
+	.btn-danger {
+		background-color: #ff0000 !important;
+		border-color: #ff0000 !important
+	}
+
+	.btn-danger:hover {
+		background-color: #da0606 !important;
+		border-color: #da0606 !important
+	}
+
+	.btn-danger:focus {
+		box-shadow: none
+	}
+
+	.cart i {
+		margin-right: 10px
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!--================Single Product Area =================-->
+<div class="product_image_area mt-3">
+	<div class="container">
+		<div class="row s_product_inner">
+			<div class="col-lg-6">
+				<div class="s_Product_carousel">
+					{% for i in image %}
+					<div class="single-prd-item">
+						<img class="img-fluid" src="{{i.images.url}}" alt="">
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-lg-5 offset-lg-1 mt-5">
+				<div class="s_product_text ">
+					<h3>{{product.product.product_name}}</h3>
+					<div class="d-flex ">
+						<h2>₹{{product.offerprice}}</h2>
+						<h4 class="ml-2 mt-1" style="text-decoration: line-through; color: gray;">
+							<!-- product unit price  -->
+							₹{{product.product.unit_price}}
+						</h4>
+						<!-- profit persentage  -->
+					</div>
+					<h6 class="text-success">{{product.offer_persentage}}% <strong>off</strong> </h6>
+					<ul class="list">
+						<li><a class="active" href="#"><span>Category</span>:
+								{{product.product.product_sub_category}}</a></li>
+						<!-- stock Availibility -->
+						{% if product.offer_stoke != 0 %}
+						<li><span>Availibility </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : In Stoke</li>
+						{% else %}
+						<li><span>Availibility </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : Out of Stoke</li>
+						{% endif %}
+					</ul>
+
+					<div class="mt-3 mb-3">
+						{% for i in product.size.all %}
+						<label class="radio"> <input type="radio" name="size" value="{{i}}"> <span>{{i}}</span> </label>
+						{% endfor %}
+					</div>
+
+					<div class="product_count">
+						<label for="qty">Quantity:</label>
+						<input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
+							class="input-text qty">
+						<button
+							onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
+							class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+						<button
+							onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
+							class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+					</div>
+					<div class="card_area d-flex align-items-center">
+						<a class="primary-btn" href="#">Add to Cart</a>
+						<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
+						<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+					</div>
+					<div class="row" style="margin-top: 39px;">
+						{% for i in related %}
+						<div class="card m-1" style="width: 6rem;">
+						<a href="{{i.get_absolute_url}}"><img src="{{i.images.url}}" class="card-img-top" alt="..."></a>	
+						  </div>
+						  {% endfor %}
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--================End Single Product Area =================-->
+
+{% include 'user_template/product_deatails/description.html' %}
+{% include 'user_template/product_deatails/deal-of-week.html' %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

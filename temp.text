@@ -1,0 +1,350 @@
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.base import TemplateView
+
+class CategoryProductList(ListView):
+    model = Offer
+    template_name = 'user_template/category.html'
+    paginate_by = 12
+    context_object_name = 'products'
+    
+    # list of products in is_active = True
+    def get_queryset(self,*args,**kwargs):
+        category = get_object_or_404(Category,slug=self.kwargs.get('category_slug'))
+        c=category.id
+        context = Offer.objects.select_related('offerProduct','offerProduct__product_sub_category').filter(offerProduct__is_active=True,offerProduct__product_sub_category__category=c)
+        return context
+
+    # dropdown list subcategory in current category
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        category = get_object_or_404(Category,slug=self.kwargs.get('category_slug'))
+        c=category.id
+        context['subcategory'] = SubCategory.objects.filter(category=c)
+        return  context
+
+
+
+
+    # def get_queryset(self,*args,**kwargs):
+
+    #     context = get_object_or_404(Offer,offerProduct__slug=self.kwargs.get('slug'))
+    #     print(context)
+    #     # context = Offer.objects.select_related('offerProduct','offerProduct__product_sub_category').filter(offerProduct__is_active=True,offerProduct__product_sub_category__category=c)
+    #     return context
+
+
+
+
+            ```
+            def categories(request,category_slug):
+                category_slug=category_slug
+                category = get_object_or_404(Category,slug=category_slug)
+                c=category.id
+                # pr=Offer.objects.select_related('offerProduct').filter(offerProduct__is_active=True)
+                context =   {
+                    'products' : Offer.objects.select_related('offerProduct','offerProduct__product_sub_category').filter(offerProduct__is_active=True,offerProduct__product_sub_category__category=c)
+                }
+                return render(request,'user_template/category.html',context)
+
+
+
+            class ProductList(ListView):
+                model = Offer
+                template_name = 'user_template/c.html'
+                paginate_by =1
+                context_object_name = 'c'
+                
+                def get_queryset(self,*args,**kwargs):
+                    category = get_object_or_404(Category,slug=self.kwargs.get('category_slug'))
+                    c=category.id
+                    return Offer.objects.select_related('offerProduct','offerProduct__product_sub_category').filter(offerProduct__is_active=True,offerProduct__product_sub_category__category=c)
+                    
+          
+               
+  ```
+
+  				<!-- <div class="sorting">
+					<select>
+						{% for sub in subcategory %}
+						<a href="{{sub.get_absolute_url}}"><option value="">{{sub.sub_category}}</option></a>
+						{% endfor %}
+					</select>
+				</div> -->
+
+                count and group by
+                Product.objects.filter(product_sub_category__category=category).values('product_sub_category__sub_category').annotate(totel=Count('product_sub_category__sub_category'))
+
+
+
+
+
+
+
+
+
+
+                <!-- {% if product.big_offer %}
+                <img src="{% static 'img/big sale.jpg' %}" alt=""
+                    style="position: absolute; height: 100px; width: 100px;">
+                {% endif %} -->
+
+
+
+
+
+def categories(request,*args,**kwargs):
+    category = get_object_or_404(Category,slug=kwargs.get('category_slug')) 
+    try:
+        product=Offer.objects.select_related('offerProduct','offerProduct__product_sub_category').filter(
+            offerProduct__is_active=True,offerProduct__product_sub_category__category=category)
+        paginator = Paginator(product, 12)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    except Offer.DoesNotExist:
+        raise Http404()
+    context =   {
+        'products' : page_obj,
+        'subcategory':  SubCategory.objects.filter(category=category) ,
+        'brands': Brand.objects.filter(brand_category=category),
+    }
+    return render(request,'user_template/category.html',context)
+
+
+
+
+
+
+
+    {% extends "admin_template/base.html" %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatables/css/dataTables.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatables/css/buttons.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatables/css/select.bootstrap4.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatables/css/fixedHeader.bootstrap4.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================== -->
+<!-- wrapper  -->
+<!-- ============================================================== -->
+<div class="dashboard-wrapper">
+    <div class="container-fluid  dashboard-content">
+        <!-- ============================================================== -->
+        <!-- pageheader -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <h2 class="pageheader-title">Tabs</h2>
+                    <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet
+                        vestibulum mi. Morbi lobortis pulvinar quam.</p>
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">UI Elements</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Tabs</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end pageheader -->
+        <!-- ============================================================== -->
+
+
+
+        <div class="row">
+
+            <!-- ============================================================== -->
+            <!-- justified tabs  -->
+            <!-- ============================================================== -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mb-5">
+                <div class="card-body border-top bg-light mb-2 shadow rounded ">
+                    <a href="{% url 'categoryapp:newcategory' %}" class="btn btn-primary btn-lg shadow">ADD NEW CATEGORY</a>
+                </div>
+                <div class="tab-regular">
+                    <ul class="nav nav-tabs nav-fill" id="myTab7" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link bg-light" id="profile-tab-justify" data-toggle="tab"
+                                href="#profile-justify" role="tab" aria-controls="profile"
+                                aria-selected="false">Categories</a>
+                        </li>
+                        {% for c in product_category %}
+                        <li class="nav-item">
+                            <a class="nav-link bg-light" id="profile-tab-justify" role="tab" aria-controls="profile"
+                                href="{{c.get_admin_subcategory_url}}" >{{c.category | title}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content" id="myTabContent7">
+
+                        <div class="tab-pane fade" id="profile-justify" role="tabpanel"
+                            aria-labelledby="profile-tab-justify">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Category</th>
+                                                            <th>Active</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for sub in product_category %}
+                                                        <tr>
+                                                            <td>{{forloop.counter}}</td>
+                                                            <td>{{sub.category}}</td>
+                                                            {% if sub.is_active %}
+                                                            <td><input type="checkbox" checked name="" id=""></td>
+                                                            {% endif %}
+                                                                                                                    <td>
+                                                            <a class="mr-4 d-inline" href="javascript:void(0)"
+                                                                title="Edit"><i class="fa fa-edit color-muted"
+                                                                    data-placement="top" data-toggle="modal"
+                                                                    data-target="#exampleModa2"
+                                                                    data-whatever="@mdo"></i> </a>
+
+                                                            <a href="#" class="d-inline" data-toggle="tooltip"
+                                                                data-placement="top" title="Delete"><i
+                                                                    class="fa fa-trash color-danger"></i></a>
+                                                        </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade show active" id="home-justify" role="tabpanel"
+                            aria-labelledby="home-tab-justify">
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Sub Category</th>
+                                                            <th>Active</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for sub in SubCategory %}
+                                                        <tr>
+                                                            <td>{{forloop.counter}}</td>
+                                                            <td>{{sub.sub_category}}</td>
+                                                            {% if sub.is_active %}
+                                                            <td><input type="checkbox" checked name="" id=""></td>
+                                                            {% endif %}
+
+                                                            <td>
+                                                                <a class="mr-4 d-inline" href="javascript:void(0)"
+                                                                    title="Edit"><i class="fa fa-edit color-muted"
+                                                                        data-placement="top" data-toggle="modal"
+                                                                        data-target="#exampleModa2"
+                                                                        data-whatever="@mdo"></i> </a>
+
+                                                                <a href="#" class="d-inline" data-toggle="tooltip"
+                                                                    data-placement="top" title="Delete"><i
+                                                                        class="fa fa-trash color-danger"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- end justified tabs  -->
+            <!-- ============================================================== -->
+        </div>
+
+    </div>
+
+    {% endblock %}
+
+
+    {% block script %}
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'assets/vendor/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="{% static 'assets/vendor/datatables/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/datatables/js/data-table.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.0.4/js/dataTables.rowGroup.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+    {% endblock %}
+
+
+    {{c.get_admin_subcategory_url}}
+
+
+
+    <table id="example2" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Subcategory</th>
+            <th>Active</th>
+            <th></th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sub in sub_category %}
+        <tr>
+            <td>{{sub.sub_category | title }}</td>
+            <td>
+                <div class="form-check form-switch">
+                <input class="form-check-input ml-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="checkbox({{sub.pk}})"  {% if sub.is_active %} checked {% endif %}>
+              </div>
+            </td>
+            <td>     
+                {{sub.category.category | title}} 
+                <a href="" class="btn btn-success float-right" data-toggle="modal" data-target="#addModal{{sub.category.pk}}">Add New</a></td>
+            <td>
+                <a class="mr-4 d-inline" href="javascript:void(0)" title="Edit"><i class="fa fa-edit color-muted"
+                        data-toggle="modal" data-target="#editModal{{sub.pk}}"></i> </a>
+
+                <a href="#" class="d-inline" data-toggle="tooltip" data-placement="top" title="Delete"><i
+                        class="fa fa-trash color-danger"></i></a>
+            </td>
+        </tr>
+        {% include 'admin_template/categories/subcategory/add.html' %}
+        {% include 'admin_template/categories/subcategory/edit.html' %}
+        {% endfor %}
+</table> 

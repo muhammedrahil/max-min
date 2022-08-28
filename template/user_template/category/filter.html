@@ -1,0 +1,62 @@
+<div class="col-xl-3 col-lg-4 col-md-5">
+    <div class="sidebar-filter ">
+        <div class="top-filter-head">Product Filters</div>
+        <div class="common-filter">
+            <div class="head">Categories</div>
+            <form action="#">
+                <ul>
+                    {% for sub in subcategory %}
+
+                    <li class="list-group-item">
+                        <input class="filter-checkbox" data-filter="subcategory" value="{{sub.id}}" type="checkbox" />&nbsp;
+                        {{sub.sub_category| title}}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </form>
+        </div>
+
+        <div class="common-filter">
+            <div class="head">Brands</div>
+            <form action="#">
+                <ul>
+                    {% for brand in brands %}
+                    <li class="list-group-item"><input class="filter-checkbox" data-filter="brand"
+                            value="{{brand.id}}" type="checkbox" >&nbsp;
+                            {{brand.title| title}}</li>
+                    {% endfor %}
+
+
+                </ul>
+            </form>
+        </div>
+        <div class="common-filter">
+            <div class="head">Size</div>
+            <form action="#">
+                <ul>
+                    {% for c in size %}
+                    <li class="list-group-item"><input class="filter-checkbox" data-filter="size"
+                            value="{{c.id}}" type="checkbox" >&nbsp;
+                            {{c.Size| title}}</li>
+                    {% endfor %}
+
+
+                </ul>
+            </form>
+        </div>
+        <div class="common-filter">
+            <div class="head">Price</div>
+            <div class="price-range-area">
+                <div id="price-range"></div>
+                <div class="value-wrapper d-flex">
+                    <div class="price">Price:</div>
+                    <span>$</span>
+                    <div id="lower-value"></div>
+                    <div class="to">to</div>
+                    <span>$</span>
+                    <div id="upper-value"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

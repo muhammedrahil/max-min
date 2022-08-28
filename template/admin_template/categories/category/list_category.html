@@ -1,0 +1,31 @@
+<table class="table table-striped table-bordered first" id="categoryTable">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Category</th>
+            <th>Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sub in category %}
+        <tr id="category-{{sub.id}}">
+            <td>{{forloop.counter}}</td>
+            <td>{{sub.category}}</td>
+            <td>
+                <div class="form-check form-switch">
+                <input class="form-check-input ml-1" type="checkbox" role="switch" id="flexSwitchCheckChecked" onclick="checkbox({{sub.pk}})"  {% if sub.is_active %} checked {% endif %}>
+              </div>
+            </td>
+            <td>
+                <a class="mr-4 d-inline" href="javascript:void(0)" title="Edit"><i class="fa fa-edit color-muted"
+                        data-toggle="modal" data-target="#editModal{{sub.pk}}"></i> </a>
+
+                <a href="#" onclick="deleteUser({{sub.pk}})" class="d-inline " data-toggle="tooltip" data-placement="top" title="Delete"><i
+                        class="fa fa-trash color-danger"></i></a>
+            </td>
+        </tr>
+        {% include 'admin_template/categories/category/edit.html' %}
+        {% endfor %}
+    </tbody>
+</table>
