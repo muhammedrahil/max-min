@@ -85,7 +85,7 @@ class SubProductAttribute(models.Model):
     is_active    =   models.BooleanField(default=True)
     
     def __str__(self):
-        return '{} '.format(self.product.product_name)
+        return '{} {}'.format(self.product.product_name,self.pk)
 
     class Meta:
         verbose_name_plural = 'sub Product Attribute'

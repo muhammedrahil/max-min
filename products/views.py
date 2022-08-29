@@ -20,5 +20,3 @@ def single_Productdeatail(request,*args,**kwargs):
     except:
         raise Http404() 
 
-
-    

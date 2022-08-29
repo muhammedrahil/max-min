@@ -94,7 +94,16 @@
 					{% endfor %}
 				</div>
 			</div>
-			<div class="col-lg-5 offset-lg-1 mt-5">
+			<div class="col-lg-5 offset-lg-1">
+
+				<div class="row" style="margin-top: 39px;">
+					{% for i in related %}
+					<div class="card m-1" style="width: 6rem;">
+					<a href="{{i.get_absolute_url}}"><img src="{{i.images.url}}" class="card-img-top" alt="..."></a>	
+					  </div>
+					  {% endfor %}
+				</div>
+
 				<div class="s_product_text ">
 					<h3>{{product.product.product_name}}</h3>
 					<div class="d-flex ">
@@ -138,15 +147,7 @@
 						<a class="primary-btn" href="#">Add to Cart</a>
 						<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
 						<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
-					</div>
-					<div class="row" style="margin-top: 39px;">
-						{% for i in related %}
-						<div class="card m-1" style="width: 6rem;">
-						<a href="{{i.get_absolute_url}}"><img src="{{i.images.url}}" class="card-img-top" alt="..."></a>	
-						  </div>
-						  {% endfor %}
-					</div>
-
+					</div>	
 				</div>
 			</div>
 		</div>

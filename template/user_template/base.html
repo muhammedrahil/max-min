@@ -86,7 +86,7 @@
 								 aria-expanded="false">Women</a>
 								<ul class="dropdown-menu">
 									{% for c in product_category %}
-									<li class="nav-item"><a class="nav-link"
+									<li class="nav-item   "><a class="nav-link"
 											href="{% url 'productsCategory:genter_categories' pk=c.pk genter=2  %}">{{c.category}}</a></li>
 									{% endfor %}
 								</ul>
